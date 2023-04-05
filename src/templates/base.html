@@ -11,6 +11,9 @@
 		<link rel="icon" type="image/png" href="{% static 'favicon.ico' %}" />
 		{% endcomment %}
 
+		<!-- Hot fix for ajax calls-->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 		<!-- Bootstrap CSS-->
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" />
 
@@ -18,7 +21,7 @@
 		<link rel="stylesheet" href="{% static 'style.css' %}">
 
 		<!-- Custom JS-->
-		<script src="{% static 'functions.js' %}" defer></script>
+		<script src="{% static 'function.js' %}" defer></script>
 		{% block scripts%} {% endblock scripts %}
 
 		<title>read posts | {% block title %}{% endblock title %}</title>
