@@ -1,17 +1,16 @@
-
 const postsBox = document.getElementById('posts-box');
 const spinnerBox = document.getElementById('spinner-box');
 const loadBtn = document.getElementById('load-btn');
 const endBox = document.getElementById('end-box');
-
 const postForm = document.getElementById('post-form');
 const title = document.getElementById('id_title');
 const body = document.getElementById('id_body');
 const csrf = document.getElementsByName('csrfmiddlewaretoken');
-
 const alertBox = document.getElementById('alert-box');
-
-const url = window.location.href
+const url = window.location.href;
+const addBtn = document.getElementById('add-btn');
+const closeBtns = [...document.getElementsByClassName('add-modal-close')];
+const dropzone = document.getElementById('my-dropzone');
 
 const getCookie =(name) => {
     let cookieValue = null;
@@ -30,11 +29,11 @@ const getCookie =(name) => {
 }
 const csrftoken = getCookie('csrftoken');
 
-const deleted = localStorage.getItem('title')
-if (deleted){
-    console.log('Deleted')
-    handleAlerts('danger', `deleted "${deleted}"`)
-    localStorage.clear()
+const deleted = localStorage.getItem('title');
+
+if(deleted) {
+    handleAlerts('danger', `deleted "${deleted}"`);
+    localStorage.clear();
 }
 
 const likeUnlikePosts = () => {
@@ -74,21 +73,21 @@ const getData = () => {
             setTimeout(()=>{
                 spinnerBox.classList.add('not-visible');
                 console.log(data);
-                data.forEach(idx => {
+                data.forEach(el => {
                     postsBox.innerHTML += `
                         <div class="card mb-2">
                             <div class="card-body">
-                                <h5 class="card-title">${idx.title}</h5>
-                                <p class="card-text">${idx.body}</p>
+                                <h5 class="card-title">${el.title}</h5>
+                                <p class="card-text">${el.body}</p>
                             </div>
                             <div class="card-footer">
                                 <div class="row">
                                     <div class="col-2">
-                                        <a href="${url}${idx.id}" class="btn btn-primary">Details</a>
+                                        <a href="${url}${el.id}" class="btn btn-primary">Details</a>
                                     </div>
                                     <div class="col-2">
-                                        <form class="like-unlike-forms" data-form-id="${idx.id}">
-                                            <button href="#" class="btn btn-primary" id="like-unlike-${idx.id}">${idx.liked ? `Unlike (${idx.count})`: `Like (${idx.count})`}</button>
+                                        <form class="like-unlike-forms" data-form-id="${el.id}">
+                                            <button class="btn btn-primary" id="like-unlike-${el.id}">${el.liked ? `Unlike (${el.count})`: `Like (${el.count})`}</button>
                                         </form>
                                     </div>
                                 </div>
@@ -118,6 +117,7 @@ loadBtn.addEventListener('click', () => {
     getData();
 })
 
+let newPostID = null;
 postForm.addEventListener('submit', e=>{
     e.preventDefault()
 
@@ -131,6 +131,7 @@ postForm.addEventListener('submit', e=>{
         },
         success: function(response) {
             console.log(response);
+            newPostID = response.id;
             postsBox.insertAdjacentHTML('afterbegin', `
                 <div class="card mb-2">
                     <div class="card-body">
@@ -140,11 +141,11 @@ postForm.addEventListener('submit', e=>{
                     <div class="card-footer">
                         <div class="row">
                             <div class="col-2">
-                                <a href="#" class="btn btn-primary">Details</a>
+                                <a href="${url}${response.id}" class="btn btn-primary">Details</a>
                             </div>
                             <div class="col-2">
                                 <form class="like-unlike-forms" data-form-id="${response.id}">
-                                    <button href="#" class="btn btn-primary" id="like-unlike-${response.id}">Like (0)</button>
+                                    <button class="btn btn-primary" id="like-unlike-${response.id}">Like (0)</button>
                                 </form>
                             </div>
                         </div>
@@ -152,9 +153,9 @@ postForm.addEventListener('submit', e=>{
                 </div>
             `);
             likeUnlikePosts()
-            $('#addPostModal').modal('hide')
+            // $('#addPostModal').modal('hide')
             handleAlerts('success', 'Post created successfully');
-            postForm.reset()
+            // postForm.reset()
         },
         error: function(error) {
             console.log(error);
@@ -162,6 +163,32 @@ postForm.addEventListener('submit', e=>{
             handleAlerts('danger', 'Oops! Something went wrong...');
         }
     })
+})
+
+addBtn.addEventListener('click', ()=> {
+    dropzone.classList.remove('not-visible');
+})
+
+closeBtns.forEach(btn => btn.addEventListener('click', () => {
+    postForm.reset();
+
+    if(!dropzone.classList.contains('not-visible')) {
+        dropzone.classList.add('not-visible');
+    }
+}))
+
+Dropzone.autoDiscover = false;
+const myDropzone = new Dropzone('#my-dropzone', {
+    url: 'upload/',
+    init: function() {
+        this.on('sending', function(file, xhr, formData){
+            formData.append('csrfmiddlewaretoken', csrftoken);
+            formData.append('new_post_id', newPostID);
+        })
+    },
+    maxFiles: 3,
+    maxFilesize: 4,
+    acceptedFiles: '.png'
 })
 
 getData();
