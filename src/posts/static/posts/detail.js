@@ -1,4 +1,5 @@
 console.log('hello world detail')
+
 const postBox = document.getElementById('post-box')
 const backBtn = document.getElementById('back-btn')
 const updateBtn = document.getElementById('updates-btn')
@@ -18,9 +19,9 @@ const bodyInput = document.getElementById('id_body')
 
 const csrf = document.getElementsByName('csrfmiddlewaretoken')
 
-backBtn.addEventListener('click', ()=>{
-    history.back();
-})
+//backBtn.addEventListener('click', ()=>{
+//    history.back();
+//})
 
 $.ajax({
     type: 'GET',
