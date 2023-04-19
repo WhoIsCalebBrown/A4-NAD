@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-rne1rdt7gyeo+kb_=m_zsw0x7n95!dc(lqgmc&-mn)ky5+0=gx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '10.169.92.218']
 
 
 # Application definition
@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
 ]
+
+LOGIN_URL = '/admin/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
